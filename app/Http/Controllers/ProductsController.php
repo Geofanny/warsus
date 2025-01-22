@@ -13,7 +13,7 @@ class ProductsController extends Controller
     public function index()
     {
         // $products = Products()->get();
-        return view("admin/products");
+        return view("admin/product/products");
     }
 
     /**
@@ -21,7 +21,7 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        return view("admin/create_product");
+        return view("admin/product/create_product");
     }
 
     /**
