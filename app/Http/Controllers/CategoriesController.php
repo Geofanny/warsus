@@ -12,7 +12,8 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Categories::get();
+        return view('admin.categories',["categories" => $categories]);
     }
 
     /**
@@ -20,7 +21,7 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        //
+    
     }
 
     /**
@@ -28,7 +29,8 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Categories::create(['name' => $request->name]);
+        return redirect('/dashboard-categories');
     }
 
     /**
