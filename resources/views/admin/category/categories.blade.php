@@ -2,6 +2,8 @@
     <x-slot name="link">
         <!-- Custom styles for this page -->
         <link href="assets-admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
     </x-slot>
 
     <!-- Page Heading -->
@@ -35,15 +37,17 @@
                                     <th>Action</th>
                                 </tr>
                             </tfoot>
-                            <tbody>
+                            <tbody class="text-capitalize">
                                 @foreach ($categories as $category )
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->created_at }}</td>
                                     <td>
-                                        <a href="" class="btn btn-secondary">Edit</a>
-                                        <a href="" class="btn btn-danger">Delete</a>
+                                        <a href="/category/{{ $category->name }}/edit" class="btn btn-sm btn-secondary">Edit</a>
+                                        <a href="javascript:void(0);" class="btn btn-danger btn-sm delete-category" data-id="{{ $category->id_category }}">
+                                            Delete
+                                        </a>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -69,7 +73,7 @@
                         <div class="row">
                             <div class="col">
                                 <label for="name" class="form-label">Name Category</label>
-                                <input type="text" class="form-control" id="name" name="name">
+                                <input type="text" class="form-control" id="name" name="name" required>
                                 <button class="btn btn-success w-100 mt-3">Submit</button>
                             </div>
                         </div>
@@ -86,5 +90,67 @@
 
         <!-- Page level custom scripts -->
         <script src="{{ asset('assets-admin') }}/js/demo/datatables-demo.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const deleteLinks = document.querySelectorAll('.delete-category');
+
+                deleteLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        const id = this.getAttribute('data-id');
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "This data will be permanently deleted!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, delete it!',
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Kirim request DELETE menggunakan form tersembunyi
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = `/category/${id}/delete`;
+
+                                // Tambahkan CSRF token
+                                const csrfInput = document.createElement('input');
+                                csrfInput.type = 'hidden';
+                                csrfInput.name = '_token';
+                                csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                                form.appendChild(csrfInput);
+
+                                // Tambahkan metode DELETE
+                                const methodInput = document.createElement('input');
+                                methodInput.type = 'hidden';
+                                methodInput.name = '_method';
+                                methodInput.value = 'DELETE';
+                                form.appendChild(methodInput);
+
+                                document.body.appendChild(form);
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            });
+
+        </script>
+
+        @if (session('success'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                timer: 10000,
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+                position: 'center',
+            });
+        </script>
+        @endif
     </x-slot>
 </x-dashboard.dashboard>
