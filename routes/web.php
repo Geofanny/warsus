@@ -5,14 +5,15 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
 
 Route::get('/', function () {
-    return redirect('/dashboard-product');
+    return redirect('/dashboard');
 });
 
-Route::view('/index', 'admin/index');
+Route::view('/dashboard', 'admin/index');
 
 // Dashboard | Product
-Route::get('/dashboard-product', [ProductsController::class,'index']);
+Route::get('/dashboard-products', [ProductsController::class,'index']);
 Route::get('/product/create', [ProductsController::class,'create']);
+Route::post('/product/post', [ProductsController::class,'store']);
 
 // Dashboard | Category
 Route::get('/dashboard-categories', [CategoriesController::class,'index']);

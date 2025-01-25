@@ -8,6 +8,24 @@ use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
+
+    function generateColorFromName($name)
+    {
+        // Hash nama kategori untuk mendapatkan nilai unik
+        $hash = crc32($name);
+
+        // Gunakan nilai hash untuk menentukan hue (0-360)
+        $hue = $hash % 360;
+
+        // Saturation dan lightness tetap untuk warna smooth
+        $saturation = 65; // 65%
+        $lightness = 70;  // 70%
+
+        // Kembalikan warna dalam format HSL
+        return "hsl($hue, {$saturation}%, {$lightness}%)";
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -15,7 +33,12 @@ class ProductsController extends Controller
     {
         // $products = Products()->get();
         $categories = Categories::get();
-        return view("admin/product/products",["categories" => $categories]);
+        $products = Products::get();
+        
+        return view("admin/product/products",[
+            "categories" => $categories,
+            "products" => $products
+        ]);
     }
 
     /**
@@ -23,7 +46,8 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        return view("admin/product/create_product");
+        $categories = Categories::get();
+        return view("admin/product/create_product",["categories" => $categories]);
     }
 
     /**
@@ -31,7 +55,24 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $newFileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $imagePath = $file->storeAs('products', $newFileName, 'public');
+        }else{
+            $imagePath = null;
+        }
+
+        Products::create([
+            'name' => $request->name,
+            'description' => $request->desc,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'category' => $request->category,
+            'product_image' => $imagePath,
+        ]);
+
+        return redirect("/dashboard-products");
     }
 
     /**
