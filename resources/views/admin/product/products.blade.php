@@ -2,6 +2,8 @@
     <x-slot name="link">
         <!-- Custom styles for this page -->
         <link href="assets-admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
     </x-slot>
 
     <!-- Page Heading -->
@@ -59,8 +61,12 @@
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->price }}</td>
                                         <td>{{ $product->stock }}</td>
+                                        {{-- <td>{{ $product->id_product }}</td> --}}
                                         <td>
-                                            <a href=""></a>
+                                            <a href="/product/{{ $product->id_product }}/edit" class="btn btn-sm btn-secondary">Edit</a>
+                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm delete-product" data-id="{{ $product->id_product }}">
+                                                Delete
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -102,5 +108,68 @@
 
         <!-- Page level custom scripts -->
         <script src="{{ asset('assets-admin') }}/js/demo/datatables-demo.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const deleteLinks = document.querySelectorAll('.delete-product');
+
+                deleteLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        const id = this.getAttribute('data-id');
+                        // console.log(id);
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "This data will be permanently deleted!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, delete it!',
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Kirim request DELETE menggunakan form tersembunyi
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = `/product/${id}/delete`;
+
+                                // Tambahkan CSRF token
+                                const csrfInput = document.createElement('input');
+                                csrfInput.type = 'hidden';
+                                csrfInput.name = '_token';
+                                csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                                form.appendChild(csrfInput);
+
+                                // Tambahkan metode DELETE
+                                const methodInput = document.createElement('input');
+                                methodInput.type = 'hidden';
+                                methodInput.name = '_method';
+                                methodInput.value = 'DELETE';
+                                form.appendChild(methodInput);
+
+                                document.body.appendChild(form);
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            });
+
+        </script>
+
+        @if (session('success'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                timer: 10000,
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+                position: 'center',
+            });
+        </script>
+        @endif
     </x-slot>
 </x-dashboard.dashboard>

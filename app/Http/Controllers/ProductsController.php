@@ -86,24 +86,54 @@ class ProductsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Products $products)
+    public function edit($id)
     {
-        //
+        $categories = Categories::get();
+        $product = Products::where("id_product", $id)->firstOrFail();
+        return view("admin/product/edit_product",[
+            "categories" => $categories,
+            "product" => $product
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Products $products)
+    public function update(Request $request, $id)
     {
-        //
+        $product = Products::where("id_product", $id)->firstOrFail();
+
+        $imagePath = $product->product_image;
+        if ($request->hasFile('img')) {
+            if ($imagePath && file_exists(storage_path('app/public/' . $imagePath))) {
+                unlink(storage_path('app/public/' . $imagePath));
+            }
+
+            $file = $request->file('img');
+            $newFileName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $imagePath = $file->storeAs('products', $newFileName, 'public');
+        }
+
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->desc,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'category' => $request->category,
+            'product_image' => $imagePath,
+        ]);
+
+        return redirect("/dashboard-products");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $products)
+    public function destroy($id)
     {
-        //
+        $product = Products::where("id_product", $id)->firstOrFail();
+        $product->delete();
+
+        return redirect("/dashboard-products")->with('success', 'Product deleted successfully.');
     }
 }

@@ -6,35 +6,35 @@
                     <h6 class="m-0 font-weight-bold text-primary">Form Product</h6>
                 </div>
                 <div class="card-body">
-                    <form action="/product/post" method="post" enctype="multipart/form-data">
+                    <form action="/product/{{ $product->id_product }}/update" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-4">
-                                <div class="card" style="width: 100%; height: 30vh;">
-                                    <div class="card-body">
-                                    <img src="" id="previewImage" alt="image product" style="width: 100%; height: 100%; object-fit: cover;">
-                                    </div>
-                                </div>
+                                <div class="card" style="width: 100%; height: 40vh;">
+                                    <div class="card-body" style="overflow: hidden;">
+                                        <img src="{{ asset("storage/".$product->product_image ) }}" id="previewImage" alt="image product" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>                                    
+                                </div>                                
                                 <div class="row mt-3">
                                     <div class="col-12">
-                                        <input class="form-control" name="img" id="formFileSm" type="file" accept=".jpg, .jpeg, .png" required>
+                                        <input class="form-control" name="img" id="formFileSm" type="file">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-8 border-left border-black">
-                                <h5>Data Product</h5>
+                                <h5>Edit Product</h5>
                                 <hr>
                                 <div class="row mb-4">
                                     <div class="col">
                                         <label for="name" class="form-label">Name Product</label>
-                                        <input type="text" class="form-control" name="name" placeholder="Enter name product" aria-label="First name" id="name" required>
+                                        <input type="text" class="form-control" name="name" placeholder="Enter name product" value="{{ $product->name }}" aria-label="First name" id="name">
                                     </div>
                                     <div class="col">
                                         <label for="category" class="form-label">Category</label>
-                                        <select id="category" class="form-control" name="category" required>
-                                        <option selected disabled>Selected Category</option>
+                                        <select id="category" class="form-control" name="category">
+                                        <option selected>Selected Category</option>
                                         @foreach ($categories as $category )
-                                            <option value="{{ $category->id_category }}">{{ $category->name }}</option>
+                                            <option value="{{ $category->id_category }}" {{ $category->id_category == $product->category ? 'selected' : '' }}>{{ $category->name }}</option>
                                         @endforeach
                                         </select>
                                     </div>
@@ -42,17 +42,17 @@
                                 <div class="row mb-4">
                                     <div class="col">
                                         <label for="price" class="form-label">Price</label>
-                                        <input type="number" name="price" class="form-control" placeholder="Enter price product" aria-label="First name" id="price" required>
+                                        <input type="number" name="price" class="form-control" placeholder="Enter price product" value="{{ $product->price }}" aria-label="First name" id="price">
                                     </div>
                                     <div class="col">
                                         <label for="stock" class="form-label">Stock</label>
-                                        <input type="number" name="stock" class="form-control" placeholder="Enter stock product" aria-label="Last name" id="stock" required>
+                                        <input type="number" name="stock" class="form-control" placeholder="Enter stock product" value="{{ $product->stock }}" aria-label="Last name" id="stock">
                                     </div>
                                 </div>
                                 <div class="row mb-4">
                                     <div class="col">
                                         <label for="description" class="form-label">Description</label>
-                                        <textarea class="form-control" name="desc" placeholder="Enter description product" id="description" required style="height: 100px"></textarea>
+                                        <textarea class="form-control" name="desc" placeholder="Enter description product" id="description" style="height: 100px;">{{ $product->description }}</textarea>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between mb-4">
@@ -65,8 +65,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    
+    </div>    
+
     <x-slot name="script">
         <script>
             document.addEventListener('DOMContentLoaded', function() {

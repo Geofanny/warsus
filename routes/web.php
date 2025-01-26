@@ -14,6 +14,11 @@ Route::view('/dashboard', 'admin/index');
 Route::get('/dashboard-products', [ProductsController::class,'index']);
 Route::get('/product/create', [ProductsController::class,'create']);
 Route::post('/product/post', [ProductsController::class,'store']);
+Route::get('/product/{id}/edit', [ProductsController::class,'edit']);
+Route::post('/product/{id}/update', [ProductsController::class, 'update']);
+Route::delete('/product/{id}/delete', [ProductsController::class, 'destroy']);
+
+
 
 // Dashboard | Category
 Route::get('/dashboard-categories', [CategoriesController::class,'index']);
