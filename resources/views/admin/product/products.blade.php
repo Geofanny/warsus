@@ -1,4 +1,21 @@
 <x-dashboard.dashboard>
+    <style>
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background-color: red;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 2px 6px;
+            min-width: 18px;
+            text-align: center;
+            line-height: 1;
+        }
+    </style>
+
     <x-slot name="link">
         <!-- Custom styles for this page -->
         <link href="assets-admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -37,6 +54,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Category</th>
+                                    <th>Image</th>
                                     <th>Name</th>
                                     <th>Price</th>
                                     <th>stock</th>
@@ -47,6 +65,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Category</th>
+                                    <th>Image</th>
                                     <th>Name</th>
                                     <th>Price</th>
                                     <th>stock</th>
@@ -57,7 +76,15 @@
                                 @foreach ($products as $product )
                                     <tr class="text-capitalize">
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $product->dataCategory->name }}</td>
+                                        <td>
+                                            <span class="badge rounded-pill category-badge text-white text-capitalize"
+                                                  data-category="{{ $product->dataCategory->name }}">
+                                                {{ $product->dataCategory->name }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <img src="{{ asset("storage/".$product->product_image ) }}" class="img-fluid rounded mx-auto d-block" alt="">
+                                        </td>
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->price }}</td>
                                         <td>{{ $product->stock }}</td>
@@ -93,9 +120,16 @@
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
-                    @foreach ($categories as $category )
-                        <span class="badge rounded-pill bg-primary text-white">{{ $category->name }}</span>
-                    @endforeach
+                    @foreach ($categories as $category)
+                    @php
+                        $productCount = $products->where('dataCategory.name', $category->name)->count();
+                    @endphp
+                    <span class="badge rounded-pill random-badge mr-2 text-white text-capitalize position-relative"
+                        data-category="{{ $category->name }}">
+                        {{ $category->name }}
+                        <span class="notification-badge">{{ $productCount }}</span>
+                    </span>
+                @endforeach                
                 </div>
             </div>
         </div>
@@ -171,5 +205,63 @@
             });
         </script>
         @endif
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let categoryColors = {};
+
+                function getRandomColor() {
+                    let hue = Math.floor(Math.random() * 360); // Warna acak berbasis HSL
+                    let saturation = 60 + Math.random() * 20;
+                    let lightness = 50 + Math.random() * 15;
+                    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                }
+
+                function getTextColor(bgColor) {
+                    let rgb = bgColor
+                        .replace(/[^\d,]/g, "")
+                        .split(",")
+                        .map(Number);
+                    let brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+                    return brightness > 150 ? "#000" : "#fff"; // Gunakan hitam jika terang, putih jika gelap
+                }
+
+                // Atur warna untuk kategori di daftar Categories
+                document.querySelectorAll(".random-badge").forEach(function (badge) {
+                    let categoryName = badge.dataset.category;
+                    if (!categoryColors[categoryName]) {
+                        let bgColor = getRandomColor();
+                        categoryColors[categoryName] = bgColor;
+                    }
+
+                    badge.style.backgroundColor = categoryColors[categoryName];
+
+                    // Konversi warna HSL ke RGB untuk perhitungan kecerahan teks
+                    let tempDiv = document.createElement("div");
+                    tempDiv.style.color = categoryColors[categoryName];
+                    document.body.appendChild(tempDiv);
+                    let computedColor = window.getComputedStyle(tempDiv).color;
+                    document.body.removeChild(tempDiv);
+
+                    badge.style.color = getTextColor(computedColor);
+                });
+
+                // Terapkan warna kategori yang sama ke tabel produk
+                document.querySelectorAll(".category-badge").forEach(function (badge) {
+                    let categoryName = badge.dataset.category;
+                    if (categoryColors[categoryName]) {
+                        badge.style.backgroundColor = categoryColors[categoryName];
+
+                        let tempDiv = document.createElement("div");
+                        tempDiv.style.color = categoryColors[categoryName];
+                        document.body.appendChild(tempDiv);
+                        let computedColor = window.getComputedStyle(tempDiv).color;
+                        document.body.removeChild(tempDiv);
+
+                        badge.style.color = getTextColor(computedColor);
+                    }
+                });
+            });
+        </script>
     </x-slot>
 </x-dashboard.dashboard>

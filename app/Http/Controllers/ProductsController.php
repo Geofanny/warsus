@@ -72,7 +72,7 @@ class ProductsController extends Controller
             'product_image' => $imagePath,
         ]);
 
-        return redirect("/dashboard-products");
+        return redirect("/dashboard-products")->with('success', 'Product added successfully.');
     }
 
     /**
@@ -123,7 +123,7 @@ class ProductsController extends Controller
             'product_image' => $imagePath,
         ]);
 
-        return redirect("/dashboard-products");
+        return redirect("/dashboard-products")->with('success', 'Product updated successfully.');
     }
 
     /**
