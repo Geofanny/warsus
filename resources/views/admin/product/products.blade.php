@@ -21,6 +21,7 @@
         <link href="assets-admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
+
     </x-slot>
 
     <!-- Page Heading -->
@@ -29,7 +30,7 @@
     {{-- <a href="" class="btn btn-sm btn-success mb-3">Add products +</a> --}}
 
     <div class="row">
-        <div class="col-xl-8 col-lg-7">
+        <div class="col-xl-9 col-lg-7">
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -83,7 +84,12 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <img src="{{ asset("storage/".$product->product_image ) }}" class="img-fluid rounded mx-auto d-block" alt="">
+                                            {{-- <img src="{{ asset("storage/".$product->product_image ) }}" class="img-fluid rounded mx-auto d-block" alt=""> --}}
+                                            <button class="btn btn-dark btn-sm view-image" 
+                                                    data-image="{{ asset("storage/".$product->product_image) }}" 
+                                                    data-name="{{ $product->description }}">
+                                                    View
+                                            </button>
                                         </td>
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->price }}</td>
@@ -96,6 +102,21 @@
                                             </a>
                                         </td>
                                     </tr>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="imageModalLabel">Product Image</h5>
+                                                    <button type="button" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img id="modalImage" src="" class="img-fluid rounded" style="max-width: 200px; height: auto;" alt="Product Image">
+                                                    <p class="mt-2" id="modalProductName" style="font-size: 14px; font-weight: 600;"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             </tbody>
                         </table>
@@ -105,7 +126,7 @@
         </div>
     
         {{-- Categories --}}
-        <div class="col-xl-4 col-lg-5">
+        <div class="col-xl-3 col-lg-5">
             {{-- View Categories --}}
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
@@ -260,6 +281,22 @@
 
                         badge.style.color = getTextColor(computedColor);
                     }
+                });
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+        <script>
+            $(document).ready(function(){
+                $(".view-image").click(function(){
+                    let imageSrc = $(this).data("image");
+                    let productName = $(this).data("name");
+                    
+                    $("#modalImage").attr("src", imageSrc);
+                    $("#modalProductName").text(productName);
+                    
+                    $("#imageModal").modal("show");
                 });
             });
         </script>
