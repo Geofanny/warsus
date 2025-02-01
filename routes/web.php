@@ -1,12 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
 
 Route::get('/', function () {
-    return redirect('/dashboard');
+    return redirect('/index');
 });
+
+Route::resource('/index', IndexController::class);
 
 Route::view('/dashboard', 'admin/index');
 

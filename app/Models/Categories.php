@@ -19,6 +19,6 @@ class Categories extends Model
     public function products(): HasMany
     {
         // hasMany(Products::class): Menunjukkan bahwa satu kategori dapat memiliki banyak produk.
-        return $this->hasMany(Products::class);
+        return $this->hasMany(Products::class, 'category', 'id_category');
     }
 }
