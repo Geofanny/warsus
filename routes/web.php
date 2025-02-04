@@ -10,6 +10,7 @@ Route::get('/', function () {
 });
 
 Route::resource('/index', IndexController::class);
+Route::post('/product/{id}/post', [IndexController::class, 'addToCart']);
 
 Route::view('/dashboard', 'admin/index');
 

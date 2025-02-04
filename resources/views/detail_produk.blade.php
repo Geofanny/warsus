@@ -1,89 +1,115 @@
 <x-home.index>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <form action="/product/{{ $product->id_product }}/update" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <div class="row">
-                                <!-- Bagian Gambar -->
-                                <div class="col-md-4 col-12 mb-4">
-                                    <div class="card">
-                                        <div class="card-body d-flex justify-content-center align-items-center" style="height: 250px;">
-                                            <img src="{{ asset('storage/'.$product->product_image) }}" id="previewImage" alt="image product" class="img-fluid" style="max-height: 100%; object-fit: cover;">
-                                        </div>                                    
-                                    </div>                                
-                                    <h2 class="text-center mt-3"><b>{{ $product->name }}</b></h2>
-                                    {{-- <h3 class="text-center text-danger"><b>Rp.{{ number_format($product->price, 2) }}</b></h3> --}}
-                                    <a href="/index" class="btn btn-danger">Kembali</a>
-                                </div>
-                        
-                                <!-- Bagian Data Produk -->
-                                <div class="col-md-8 col-12 border-md-start border-black">
-                                    <h5 class="text-capitalize">
-                                        <b>
-                                            Detail {{ $product->name }}
-                                        </b>
-                                    </h5>
-                                    <hr>
-                                    <div class="row text-muted">
-                                        <div class="col-md-6 col-12">
-                                            <p>
-                                                <b>Stock : {{ $product->stock }}</b>
-                                            </p>
-                                            <p>
-                                                {{ $product->description }}
-                                            </p>
-                                        </div>
-                                        <hr>
-                                    </div>
-
-                                    <p>Qty:</p>
-                                    <div class="input-group mb-3">
-                                        <button class="btn btn-dark btn-sm" type="button" id="btnPlus"><i class="fa-solid fa-minus"></i></button>
-                                        <input type="text" class="form-control form-control-sm" readonly value="1" id="formInput">
-                                        <button class="btn btn-sm btn-dark" type="button" id="btnMinus"><i class="fa-solid fa-plus"></i></button>
-                                    </div>
-
-                                    <div class="mt-4 mb-4">
-                                        <h3>Harga :
-                                            <span class="text-danger"><b>Rp.{{ number_format($product->price) }}</b></span>
-                                        </h3>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <a href="/dashboard-products" class="btn btn-warning">Masukkan Keranjang</a>
-                                        <button class="btn btn-success">Checkout</button>
-                                    </div>
-                                </div>
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Tombol Kembali di Atas -->
+                <div class="mb-3 d-flex justify-content-md-start justify-content-start">
+                    <a href="/index" class="btn btn-danger btn-lg px-4 py-2 shadow-sm btn-sm">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Kembali
+                    </a>
+                </div>
+                <div class="row">
+                    <!-- Bagian Gambar -->
+                    <div class="col-md-4 col-12 mb-4">
+                        <div class="card">
+                            <div class="card-body d-flex justify-content-center align-items-center" style="height: 250px;">
+                                <img src="{{ asset('storage/'.$product->product_image) }}" id="previewImage" alt="image product" class="img-fluid" style="max-height: 100%; object-fit: cover;">
+                            </div>                                    
+                        </div>                                
+                        <h2 class="text-center mt-3"><b>{{ $product->name }}</b></h2>
+                    </div>
+            
+                    <!-- Bagian Data Produk -->
+                    <div class="col-md-8 col-12 border-md-start border-black">
+                        <h5 class="text-capitalize">
+                            <b>Detail {{ $product->name }}</b>
+                        </h5>
+                        <hr>
+                        <div class="row text-muted">
+                            <div class="col-md-6 col-12">
+                                <p>
+                                    <b>Stock : {{ $product->stock }}</b>
+                                </p>
+                                <p>
+                                    {{ $product->description }}
+                                </p>
                             </div>
-                        </form>                    
+                        </div>
+                    </div>
+                </div>               
+            </div>
+        </div>
+    </div>
+    
+
+    <style>
+        @media (max-width: 768px) {
+            .mobile-center {
+                justify-content: center !important;
+                text-align: center;
+            }
+        }
+    </style>
+    
+    <div class="container-fluid fixed-bottom bg-light">
+        <form action="/product/{{ $product->id_product }}/post" method="post">
+            @csrf
+            <div class="row p-3 d-flex align-items-center">
+                <!-- Bagian Kiri (Total Harga dan Qty) -->
+                <div class="col-12 col-md-5 d-flex align-items-center p-2 flex-wrap mobile-center">
+                    <h1 class="mb-0 mx-3">
+                        <span class="text-danger" id="subtotal"><b>Rp.{{ number_format($product->price * 1) }}</b></span>
+                    </h1>
+        
+                    <div class="input-group mx-3" style="max-width: 120px;">
+                        <button class="btn btn-dark btn-sm" type="button" id="btnMinus"><i class="fa-solid fa-minus"></i></button>
+                        <input type="text" class="form-control form-control-sm text-center" readonly value="1" id="formInput" name="quantity" style="border: none;">
+                        <button class="btn btn-dark btn-sm" type="button" id="btnPlus"><i class="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
+        
+                <!-- Bagian Kanan (Tombol Keranjang dan Checkout) -->
+                <div class="col-12 col-md-7 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-warning w-50 me-3 py-3 text-center">Keranjang</button>
+                    <a href="#" class="btn btn-success w-50 py-3">Checkout</a>
+                </div>
             </div>
-        </div> 
+        </form>
     </div>
 
     <x-slot name="script">
         <script>
-            let btnMinus = document.getElementById("btnPlus");
-            let btnPlus = document.getElementById("btnMinus");
+            let btnMinus = document.getElementById("btnMinus");
+            let btnPlus = document.getElementById("btnPlus");
             let inputNumber = document.getElementById("formInput");
-
-            let parseInteger = parseInt(inputNumber.value);
-
+            let subtotal = document.getElementById("subtotal");
+        
+            let qty = parseInt(inputNumber.value);
+            let price = {{ $product->price }};  // harga produk dari
+            
+            // menghitung harga total
+            function updateSubtotal() {
+                let total = qty * price;
+                subtotal.innerHTML = "<b>Rp." + total.toLocaleString() + "</b>"; // Format angka
+            }
+        
+            // Plus
             btnPlus.addEventListener("click", function(){
-                parseInteger++
-                inputNumber.value = parseInteger;
-            })
-
+                qty++;
+                inputNumber.value = qty;
+                updateSubtotal();
+            });
+        
+            // Minus
             btnMinus.addEventListener("click", function(){
-                if(parseInteger > 1){
-                    parseInteger--
-                    inputNumber.value = parseInteger;
+                if (qty > 1) {
+                    qty--;
+                    inputNumber.value = qty;
+                    updateSubtotal();
                 }
-            })
+            });
+        
+            updateSubtotal();
         </script>
     </x-slot>
 </x-home.index>

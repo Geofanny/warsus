@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\cartDetail;
 use App\Models\Categories;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
@@ -20,5 +22,11 @@ class Products extends Model
     {
         // belongsTo(Categories::class): Menunjukkan bahwa setiap produk berhubungan dengan satu kategori.
         return $this->belongsTo(Categories::class, 'category');
+    }
+
+    // Relasi One to Many ke CartDetail
+    public function cartDetails(): HasMany
+    {
+        return $this->hasMany(cartDetail::class, 'product_id','id_cart_detail');
     }
 }

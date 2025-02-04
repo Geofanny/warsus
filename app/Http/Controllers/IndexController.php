@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Products;
+use App\Models\cartDetail;
 use App\Models\Categories;
 use Illuminate\Http\Request;
 
@@ -45,6 +47,51 @@ class IndexController extends Controller
     {
         $product = Products::where("name", $name)->firstOrFail();
         return view('detail_produk',["product" => $product]);
+    }
+
+    public function addToCart(Request $request, $productId)
+    {
+        $product = Products::findOrFail($productId);
+        
+        // Cek apakah user sudah memiliki cart
+        $cart = Cart::where('user_id', 1)->first();
+
+        // dd($cart);
+
+        if (!$cart) {
+            // Buat cart baru jika belum ada
+            $cart = Cart::create([
+                'user_id' => 1,
+                'total_price' => 0
+            ]);
+        }
+
+        // Cek apakah produk sudah ada di cart_details
+        $cartDetail = cartDetail::where('cart_id', $cart->id_cart)
+        ->where('product_id', $productId)
+        ->first();
+
+        if ($cartDetail) {
+            // Jika sudah ada, tambahkan quantity
+            $cartDetail->quantity += $request->quantity;
+            $cartDetail->subtotal = $cartDetail->quantity * $product->price;
+            $cartDetail->save();
+        } else {
+            // Jika belum ada, buat baru
+            cartDetail::create([
+                'cart_id' => $cart->id_cart,
+                'product_id' => $productId,
+                'quantity' => $request->quantity,
+                'subtotal' => $request->quantity * $product->price
+            ]);
+        }
+
+        // Update total_price di carts
+        $cart->total_price = cartDetail::where('cart_id', $cart->id_cart)->sum('subtotal');
+        $cart->save();
+
+        return redirect('/index');
+        
     }
 
     /**
