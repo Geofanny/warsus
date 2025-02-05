@@ -23,7 +23,7 @@ class Cart extends Model
     public function cartDetails(): HasMany
     {
         // hasMany(Products::class): Menunjukkan bahwa satu kategori dapat memiliki banyak produk.
-        return $this->hasMany(cartDetail::class, 'cart_id','id_cart_detail');
+        return $this->hasMany(cartDetail::class, 'cart_id','id_cart');
     }
 
     public function user(): BelongsTo

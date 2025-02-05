@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
@@ -9,8 +10,13 @@ Route::get('/', function () {
     return redirect('/index');
 });
 
+// Home | Index
 Route::resource('/index', IndexController::class);
+// Home | Detail Product
 Route::post('/product/{id}/post', [IndexController::class, 'addToCart']);
+// Home | Page Cart
+Route::get('/cart', [CartController::class, 'index']);
+Route::delete('/cart/delete', [CartController::class, 'delete'])->name('cart.delete');
 
 Route::view('/dashboard', 'admin/index');
 
@@ -21,7 +27,6 @@ Route::post('/product/post', [ProductsController::class,'store']);
 Route::get('/product/{id}/edit', [ProductsController::class,'edit']);
 Route::post('/product/{id}/update', [ProductsController::class, 'update']);
 Route::delete('/product/{id}/delete', [ProductsController::class, 'destroy']);
-
 
 
 // Dashboard | Category
