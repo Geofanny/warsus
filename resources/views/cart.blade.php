@@ -1,4 +1,4 @@
-<x-home.index>
+<x-home.pesanan>
     <style>
         .product-image {
             width: 100%;
@@ -9,13 +9,13 @@
     </style>
 
     <div class="col-12">
-        <div class="card shadow">
+        <div class="card">
             <div class="container my-4">            
                 @if ($cart && $cart->cartDetails->count() > 0)
                     <div class="row">
                         @foreach ($cart->cartDetails as $cartDetail)
                             <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card shadow-sm border-0">
+                                <div class="card">
                                     <div class="row g-0">
                                         <div class="col-4">
                                             <img src="{{ asset("storage/".$cartDetail->product->product_image) }} ?? 'https://via.placeholder.com/150' }}" 
@@ -60,16 +60,17 @@
                                 <button type="submit" id="btn-delete" class="btn btn-outline-danger btn-lg" disabled>Hapus</button>
                             </form>                                                        
     
-                            <form action="" method="POST">
+                            <form id="checkout-form" action="{{ route('cart.checkout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-success btn-lg" id="btn-checkout" disabled>Checkout</button>
-                            </form>
+                                <input type="hidden" name="selected_items" id="checkout-selected-items">
+                                <button type="submit" id="btn-checkout" class="btn btn-success btn-lg" disabled>Checkout</button>
+                            </form>                            
                         </div>
                     </div>
                 @else
                     <div class="alert alert-warning text-center">
                         <h5>Keranjang masih kosong 😢</h5>
-                        <a href="/" class="btn btn-primary mt-2">Belanja Sekarang</a>
+                        <a href="/" class="mt-2">Belanja Sekarang</a>
                     </div>
                 @endif
             </div>
@@ -133,8 +134,26 @@
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener("change", updateTotal);
                 });
+
+                const checkoutForm = document.getElementById("checkout-form");
+                const checkoutSelectedItemsInput = document.getElementById("checkout-selected-items");
+                
+                checkoutForm.addEventListener("submit", function (event) {
+                    let selectedIds = [];
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            selectedIds.push(checkbox.value);
+                        }
+                    });
+
+                    checkoutSelectedItemsInput.value = selectedIds.join(",");
+
+                    if (selectedIds.length === 0) {
+                        event.preventDefault();
+                    }
+                });
             });
         </script>
     </x-slot>
 
-</x-home.index>
+</x-home.pesanan>

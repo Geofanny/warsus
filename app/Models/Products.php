@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\cartDetail;
 use App\Models\Categories;
+use App\Models\orderDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,5 +29,10 @@ class Products extends Model
     public function cartDetails(): HasMany
     {
         return $this->hasMany(cartDetail::class, 'product_id','id_cart_detail');
+    }
+
+    public function orderDetails(): HasMany
+    {
+        return $this->hasMany(orderDetail::class, 'product_id', 'id_product');
     }
 }

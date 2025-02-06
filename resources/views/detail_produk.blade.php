@@ -1,4 +1,4 @@
-<x-home.index>
+<x-home.pesanan>
     <div class="col-12">
         <div class="card shadow">
             <div class="card-body">
@@ -112,4 +112,4 @@
             updateSubtotal();
         </script>
     </x-slot>
-</x-home.index>
+</x-home.pesanan>

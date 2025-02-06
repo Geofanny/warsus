@@ -10,6 +10,8 @@ Route::get('/', function () {
     return redirect('/index');
 });
 
+Route::view('/alert', 'confirmPage');
+
 // Home | Index
 Route::resource('/index', IndexController::class);
 // Home | Detail Product
@@ -17,6 +19,7 @@ Route::post('/product/{id}/post', [IndexController::class, 'addToCart']);
 // Home | Page Cart
 Route::get('/cart', [CartController::class, 'index']);
 Route::delete('/cart/delete', [CartController::class, 'delete'])->name('cart.delete');
+Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
 Route::view('/dashboard', 'admin/index');
 
