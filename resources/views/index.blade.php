@@ -254,7 +254,7 @@
                                     <img src="{{ asset('storage/default.jpg') }}" class="menu-img img-fluid" alt="No Image" style="object-fit: cover; width: 100%; height: 200px; border-radius: 8px;">
                                 @endif
                                 <h4>{{ $product->name }}</h4>
-                                <p class="price">Rp.{{ number_format($product->price, 2) }}</p>
+                                <p class="price">Rp.{{ number_format($product->price) }}</p>
                             </div>
                         @empty
                             <p class="text-center">No products available in this category.</p>

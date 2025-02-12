@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Products;
 use App\Models\cartDetail;
 use App\Models\Categories;
+use App\Models\orderDetail;
 use Illuminate\Http\Request;
 
 class IndexController extends Controller
@@ -90,6 +92,30 @@ class IndexController extends Controller
         $cart->total_price = cartDetail::where('cart_id', $cart->id_cart)->sum('subtotal');
         $cart->save();
 
+        if ($request->has('checkout')) {
+            // Buat order
+            $order = Order::create([
+                'user_id' => 1,
+                'order_date' => now(),
+                'total_payment' => $cart->total_price,
+                'status' => 'awaiting_payment'
+            ]);
+
+            $cartDetails = cartDetail::where('cart_id', $cart->id_cart)->get();
+            foreach ($cartDetails as $detail) {
+                orderDetail::create([
+                    'order_id' => $order->id_order,
+                    'product_id' => $detail->product_id,
+                    'quantity' => $detail->quantity,
+                    'subtotal' => $detail->subtotal,
+                ]);
+            }
+
+            cartDetail::where('cart_id', $cart->id_cart)->delete();
+    
+            return redirect()->route('orders.show', $order->id_order);
+        }
+        
         return redirect('/index');
         
     }

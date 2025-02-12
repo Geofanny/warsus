@@ -60,10 +60,10 @@
                                 <button type="submit" id="btn-delete" class="btn btn-outline-danger btn-lg" disabled>Hapus</button>
                             </form>                                                        
     
-                            <form id="checkout-form" action="{{ route('cart.checkout') }}" method="POST">
+                            <form id="order-form" action="{{ route('cart.order') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="selected_items" id="checkout-selected-items">
-                                <button type="submit" id="btn-checkout" class="btn btn-success btn-lg" disabled>Checkout</button>
+                                <input type="hidden" name="selected_items" id="order-selected-items">
+                                <button type="submit" id="btn-pesan" class="btn btn-success btn-lg" disabled>Pesan</button>
                             </form>                            
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                 const totalPriceElement = document.getElementById("total-price");
                 const totPrice = document.getElementById("totPrice");
                 const btnDelete = document.getElementById("btn-delete");
-                const btnCheckout = document.getElementById("btn-checkout");
+                const btnPesan = document.getElementById("btn-pesan");
         
                 let totalPrice = 0;
 
@@ -128,17 +128,17 @@
         
                     totalPriceElement.textContent = "Rp." + totalPrice.toLocaleString("id-ID");
                     btnDelete.disabled = selectedCount === 0;
-                    btnCheckout.disabled = selectedCount === 0;
+                    btnPesan.disabled = selectedCount === 0;
                 }
         
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener("change", updateTotal);
                 });
 
-                const checkoutForm = document.getElementById("checkout-form");
-                const checkoutSelectedItemsInput = document.getElementById("checkout-selected-items");
-                
-                checkoutForm.addEventListener("submit", function (event) {
+                const orderForm = document.getElementById("order-form");
+                const orderSelectedItemsInput = document.getElementById("order-selected-items");
+
+                orderForm.addEventListener("submit", function (event) {
                     let selectedIds = [];
                     checkboxes.forEach(checkbox => {
                         if (checkbox.checked) {
@@ -146,10 +146,11 @@
                         }
                     });
 
-                    checkoutSelectedItemsInput.value = selectedIds.join(",");
+                    orderSelectedItemsInput.value = selectedIds.join(",");
 
                     if (selectedIds.length === 0) {
                         event.preventDefault();
+                        alert("Silakan pilih setidaknya satu item.");
                     }
                 });
             });

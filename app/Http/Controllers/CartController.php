@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Midtrans\Config;
+use Midtrans\Snap;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Products;
@@ -74,5 +76,41 @@ class CartController extends Controller
         }
     }
 
+    public function createOrder(Request $request)
+    {
+        // $user = Auth::user();
+        $selectedItems = explode(',', $request->selected_items);
+        // if (empty($selectedItems)) {
+        //     return redirect()->back()->with('error', 'Silakan pilih item terlebih dahulu.');
+        // }
+
+        // Buat pesanan baru
+        $order = Order::create([
+            'user_id' => 1,
+            'order_date' => now(),
+            'total_payment' => 0,
+            'status' => 'awaiting_payment'
+        ]);
+
+        $totalPayment = 0;
+        foreach ($selectedItems as $cartDetailId) {
+            $cartDetail = cartDetail::find($cartDetailId);
+            if ($cartDetail) {
+                orderDetail::create([
+                    'order_id' => $order->id_order,
+                    'product_id' => $cartDetail->product_id,
+                    'quantity' => $cartDetail->quantity,
+                    'subtotal' => $cartDetail->subtotal,
+                ]);
+                $totalPayment += $cartDetail->subtotal;
+                $cartDetail->delete();
+            }
+        }
+
+        // Update total pembayaran
+        $order->update(['total_payment' => $totalPayment]);
+
+        return redirect()->route('orders.show', $order->id_order);
+    }
 
 }

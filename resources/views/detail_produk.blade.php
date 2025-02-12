@@ -70,8 +70,9 @@
         
                 <!-- Bagian Kanan (Tombol Keranjang dan Checkout) -->
                 <div class="col-12 col-md-7 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-warning w-50 me-3 py-3 text-center">Keranjang</button>
-                    <a href="#" class="btn btn-success w-50 py-3">Checkout</a>
+                    <button type="submit" name="cart" class="btn btn-warning w-50 me-3 py-3 text-center">Keranjang</button>
+                    <button type="submit" name="checkout" class="btn btn-success w-50 me-3 py-3 text-center">Checkout</button>
+                    {{-- <a href="#" class="btn btn-success w-50 py-3">Pesan</a> --}}
                 </div>
             </div>
         </form>

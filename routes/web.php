@@ -5,6 +5,9 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\OrderController;
+
 
 Route::get('/', function () {
     return redirect('/index');
@@ -14,12 +17,29 @@ Route::view('/alert', 'confirmPage');
 
 // Home | Index
 Route::resource('/index', IndexController::class);
+
 // Home | Detail Product
 Route::post('/product/{id}/post', [IndexController::class, 'addToCart']);
 // Home | Page Cart
 Route::get('/cart', [CartController::class, 'index']);
 Route::delete('/cart/delete', [CartController::class, 'delete'])->name('cart.delete');
-Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+// Home | Create Pesanan
+Route::post('/cart/order', [CartController::class, 'createOrder'])->name('cart.order');
+
+// Home | Pesanan
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+// Home | Page Checkout
+Route::post('/cart/checkout', [PaymentController::class, 'checkout'])->name('cart.checkout');
+
+// Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+
+// Route::post('/midtrans/callback', [PaymentController::class, 'handleNotification']);
+
+// Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+
+Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+Route::post('/payment/notification', [PaymentController::class, 'handleNotification']); // Callback Midtrans
 
 Route::view('/dashboard', 'admin/index');
 

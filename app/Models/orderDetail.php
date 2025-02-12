@@ -18,12 +18,14 @@ class orderDetail extends Model
         'subtotal'
     ];
 
+    protected $with = ['product'];
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'id_order');
     }
 
-    public function dataProduct(): BelongsTo
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Products::class, 'product_id', 'id_product');
     }
