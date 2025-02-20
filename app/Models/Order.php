@@ -20,7 +20,7 @@ class Order extends Model
         'status'
     ];
 
-    protected $with = ['user','orderDetails'];
+    protected $with = ['user','orderDetails','payment'];
 
     public function user(): BelongsTo
     {

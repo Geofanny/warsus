@@ -26,6 +26,12 @@ Route::delete('/cart/delete', [CartController::class, 'delete'])->name('cart.del
 // Home | Create Pesanan
 Route::post('/cart/order', [CartController::class, 'createOrder'])->name('cart.order');
 
+// Home| Page Info Order
+Route::get('/order', [OrderController::class, 'index']);
+Route::get('/order/belum-bayar', [OrderController::class, 'notYetPaid']);
+Route::get('/order/pesanan', [OrderController::class, 'completedPaid']);
+
+
 // Home | Pesanan
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 

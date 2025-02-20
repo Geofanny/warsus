@@ -22,9 +22,10 @@
 
 
                 <h4 class="mt-4">Pilih Metode Pembayaran</h4>
-                
+
                 <select id="payment-method" class="form-control mt-2">
-                    <option value="bank_transfer" {{ $paymentMethod == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                    <option value="bank_transfer" {{ $paymentMethod == 'bank_transfer' ? 'selected' : '' }}>Bank
+                        Transfer</option>
                     <option value="e_wallet" {{ $paymentMethod == 'e_wallet' ? 'selected' : '' }}>E-Wallet</option>
                 </select>
 
@@ -38,84 +39,86 @@
     </div>
 
     <x-slot name="script">
-        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('midtrans.client_key') }}"></script>
 
         <script>
             // document.getElementById('payment-method').addEventListener('change', function () {
             //     let selectedMethod = this.value;
             //     window.location.href = `?payment_method=${selectedMethod}`;
             // });
-            
-            document.getElementById('payment-method').addEventListener('change', function () {
+
+            document.getElementById('payment-method').addEventListener('change', function() {
                 let selectedMethod = this.value;
                 let orderId = "{{ $order->id_order }}";
                 let payButton = document.getElementById('pay-button');
                 payButton.disabled = true;
 
                 fetch(`/orders/${orderId}?payment_method=${selectedMethod}`, {
-                    method: "GET",
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // alert("Metode pembayaran diperbarui!");
-                        location.reload();
-                        setTimeout(() => {
-                            payButton.disabled = false;
-                        }, 10000);
-                    } else {
-                        // alert("Gagal memperbarui metode pembayaran.");
-                    }
-                })
-                .catch(error => console.error("Error:", error));
+                        method: "GET",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // alert("Metode pembayaran diperbarui!");
+                            location.reload();
+                            setTimeout(() => {
+                                payButton.disabled = false;
+                            }, 10000);
+                        } else {
+                            // alert("Gagal memperbarui metode pembayaran.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
             });
 
-            document.getElementById('pay-button').addEventListener('click', function () {
+            document.getElementById('pay-button').addEventListener('click', function() {
                 let selectedMethod = document.getElementById('payment-method').value;
 
                 snap.pay('{{ $snapToken }}', {
-                    onSuccess: function(result){
+                    onSuccess: function(result) {
                         // alert("Pembayaran berhasil!");
 
                         // Kirim data ke server via fetch API
                         fetch("{{ route('payment.process') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({
-                                order_id: "{{ $order->id_order }}",
-                                payment_method: selectedMethod,
-                                payment_status: result.transaction_status, // Status dari Midtrans
-                                payment_date: result.transaction_time
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                },
+                                body: JSON.stringify({
+                                    order_id: "{{ $order->id_order }}",
+                                    payment_method: selectedMethod,
+                                    payment_status: result
+                                    .transaction_status, // Status dari Midtrans
+                                    payment_date: result.transaction_time
+                                })
                             })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // alert("Data pembayaran disimpan!");
-                                window.location.href = "/alert";
-                            } else {
-                                alert("Gagal menyimpan data!");
-                            }
-                        })
-                        .catch(error => console.error("Error:", error));
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // alert("Data pembayaran disimpan!");
+                                    window.location.href = "/alert";
+                                } else {
+                                    alert("Gagal menyimpan data!");
+                                }
+                            })
+                            .catch(error => console.error("Error:", error));
                     },
 
-                    onPending: function(result){
+                    onPending: function(result) {
                         alert("Menunggu pembayaran.");
                     },
 
-                    onError: function(result){
+                    onError: function(result) {
                         alert("Pembayaran gagal.");
                     }
                 });
             });
         </script>
-        
+
     </x-slot>
 </x-home.pesanan>

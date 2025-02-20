@@ -10,7 +10,7 @@
 
     <div class="col-12">
         <div class="card">
-            <div class="container my-4">            
+            <div class="container my-4">
                 @if ($cart && $cart->cartDetails->count() > 0)
                     <div class="row">
                         @foreach ($cart->cartDetails as $cartDetail)
@@ -18,9 +18,8 @@
                                 <div class="card">
                                     <div class="row g-0">
                                         <div class="col-4">
-                                            <img src="{{ asset("storage/".$cartDetail->product->product_image) }} ?? 'https://via.placeholder.com/150' }}" 
-                                                 class="img-fluid rounded-start product-image" 
-                                                 alt="Gambar Produk">
+                                            <img src="{{ asset('storage/' . $cartDetail->product->product_image) }} ?? 'https://via.placeholder.com/150' }}"
+                                                class="img-fluid rounded-start product-image" alt="Gambar Produk">
                                         </div>
                                         <div class="col-8">
                                             <div class="card-body">
@@ -29,14 +28,19 @@
                                                     Rp.{{ number_format($cartDetail->product->price ?? 0) }}
                                                 </p>
                                                 <p class="card-text">
-                                                    <small class="text-muted">Jumlah: {{ $cartDetail->quantity }}</small>
+                                                    <small class="text-muted">Jumlah:
+                                                        {{ $cartDetail->quantity }}</small>
                                                 </p>
-            
+
                                                 <div class="d-flex justify-content-between">
                                                     <p class="card-text">
-                                                        <b class="text-success">Total: Rp.{{ number_format($cartDetail->subtotal) }}</b>
+                                                        <b class="text-success">Total:
+                                                            Rp.{{ number_format($cartDetail->subtotal) }}</b>
                                                     </p>
-                                                    <input type="checkbox" name="selected_items[]" value="{{ $cartDetail->id_cart_detail }}" data-subtotal="{{ $cartDetail->subtotal }}" class="item-checkbox">
+                                                    <input type="checkbox" name="selected_items[]"
+                                                        value="{{ $cartDetail->id_cart_detail }}"
+                                                        data-subtotal="{{ $cartDetail->subtotal }}"
+                                                        class="item-checkbox">
                                                 </div>
                                             </div>
                                         </div>
@@ -45,7 +49,7 @@
                             </div>
                         @endforeach
                     </div>
-            
+
                     <div class="container-fluid">
                         <div>
                             <h1>
@@ -57,14 +61,16 @@
                                 @csrf
                                 @method('DELETE')
                                 <input type="hidden" name="selected_items" id="selected-items">
-                                <button type="submit" id="btn-delete" class="btn btn-outline-danger btn-lg" disabled>Hapus</button>
-                            </form>                                                        
-    
+                                <button type="submit" id="btn-delete" class="btn btn-outline-danger btn-lg"
+                                    disabled>Hapus</button>
+                            </form>
+
                             <form id="order-form" action="{{ route('cart.order') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="selected_items" id="order-selected-items">
-                                <button type="submit" id="btn-pesan" class="btn btn-success btn-lg" disabled>Pesan</button>
-                            </form>                            
+                                <button type="submit" id="btn-pesan" class="btn btn-success btn-lg"
+                                    disabled>Pesan</button>
+                            </form>
                         </div>
                     </div>
                 @else
@@ -74,25 +80,25 @@
                     </div>
                 @endif
             </div>
-            
+
         </div>
     </div>
 
     <x-slot name="script">
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("DOMContentLoaded", function() {
                 const checkboxes = document.querySelectorAll(".item-checkbox");
                 const totalPriceElement = document.getElementById("total-price");
                 const totPrice = document.getElementById("totPrice");
                 const btnDelete = document.getElementById("btn-delete");
                 const btnPesan = document.getElementById("btn-pesan");
-        
+
                 let totalPrice = 0;
 
                 const deleteForm = document.getElementById("delete-form");
                 const selectedItemsInput = document.getElementById("selected-items");
 
-                deleteForm.addEventListener("submit", function (event) {
+                deleteForm.addEventListener("submit", function(event) {
                     let selectedIds = [];
                     checkboxes.forEach(checkbox => {
                         if (checkbox.checked) {
@@ -107,11 +113,11 @@
                     }
                 });
 
-        
+
                 function updateTotal() {
                     totalPrice = 0;
                     let selectedCount = 0;
-        
+
                     checkboxes.forEach(checkbox => {
                         if (checkbox.checked) {
                             totalPrice += parseFloat(checkbox.dataset.subtotal);
@@ -125,12 +131,12 @@
                     } else {
                         totPrice.style.display = "none";
                     }
-        
+
                     totalPriceElement.textContent = "Rp." + totalPrice.toLocaleString("id-ID");
                     btnDelete.disabled = selectedCount === 0;
                     btnPesan.disabled = selectedCount === 0;
                 }
-        
+
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener("change", updateTotal);
                 });
@@ -138,7 +144,7 @@
                 const orderForm = document.getElementById("order-form");
                 const orderSelectedItemsInput = document.getElementById("order-selected-items");
 
-                orderForm.addEventListener("submit", function (event) {
+                orderForm.addEventListener("submit", function(event) {
                     let selectedIds = [];
                     checkboxes.forEach(checkbox => {
                         if (checkbox.checked) {

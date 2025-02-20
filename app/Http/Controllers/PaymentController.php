@@ -215,6 +215,7 @@ class PaymentController extends Controller
         }
     
         return response()->json(['success' => false]);
+        return redirect('/');
     }
 
     public function handleNotification(Request $request)

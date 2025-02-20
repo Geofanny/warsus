@@ -12,13 +12,15 @@
                     <!-- Bagian Gambar -->
                     <div class="col-md-4 col-12 mb-4">
                         <div class="card">
-                            <div class="card-body d-flex justify-content-center align-items-center" style="height: 250px;">
-                                <img src="{{ asset('storage/'.$product->product_image) }}" id="previewImage" alt="image product" class="img-fluid" style="max-height: 100%; object-fit: cover;">
-                            </div>                                    
-                        </div>                                
+                            <div class="card-body d-flex justify-content-center align-items-center"
+                                style="height: 250px;">
+                                <img src="{{ asset('storage/' . $product->product_image) }}" id="previewImage"
+                                    alt="image product" class="img-fluid" style="max-height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
                         <h2 class="text-center mt-3"><b>{{ $product->name }}</b></h2>
                     </div>
-            
+
                     <!-- Bagian Data Produk -->
                     <div class="col-md-8 col-12 border-md-start border-black">
                         <h5 class="text-capitalize">
@@ -36,11 +38,11 @@
                             </div>
                         </div>
                     </div>
-                </div>               
+                </div>
             </div>
         </div>
     </div>
-    
+
 
     <style>
         @media (max-width: 768px) {
@@ -50,7 +52,7 @@
             }
         }
     </style>
-    
+
     <div class="container-fluid fixed-bottom bg-light">
         <form action="/product/{{ $product->id_product }}/post" method="post">
             @csrf
@@ -58,20 +60,26 @@
                 <!-- Bagian Kiri (Total Harga dan Qty) -->
                 <div class="col-12 col-md-5 d-flex align-items-center p-2 flex-wrap mobile-center">
                     <h1 class="mb-0 mx-3">
-                        <span class="text-danger" id="subtotal"><b>Rp.{{ number_format($product->price * 1) }}</b></span>
+                        <span class="text-danger"
+                            id="subtotal"><b>Rp.{{ number_format($product->price * 1) }}</b></span>
                     </h1>
-        
+
                     <div class="input-group mx-3" style="max-width: 120px;">
-                        <button class="btn btn-dark btn-sm" type="button" id="btnMinus"><i class="fa-solid fa-minus"></i></button>
-                        <input type="text" class="form-control form-control-sm text-center" readonly value="1" id="formInput" name="quantity" style="border: none;">
-                        <button class="btn btn-dark btn-sm" type="button" id="btnPlus"><i class="fa-solid fa-plus"></i></button>
+                        <button class="btn btn-dark btn-sm" type="button" id="btnMinus"><i
+                                class="fa-solid fa-minus"></i></button>
+                        <input type="text" class="form-control form-control-sm text-center" readonly value="1"
+                            id="formInput" name="quantity" style="border: none;">
+                        <button class="btn btn-dark btn-sm" type="button" id="btnPlus"><i
+                                class="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
-        
+
                 <!-- Bagian Kanan (Tombol Keranjang dan Checkout) -->
                 <div class="col-12 col-md-7 d-flex justify-content-end">
-                    <button type="submit" name="cart" class="btn btn-warning w-50 me-3 py-3 text-center">Keranjang</button>
-                    <button type="submit" name="checkout" class="btn btn-success w-50 me-3 py-3 text-center">Checkout</button>
+                    <button type="submit" name="cart"
+                        class="btn btn-warning w-50 me-3 py-3 text-center">Keranjang</button>
+                    <button type="submit" name="checkout"
+                        class="btn btn-success w-50 me-3 py-3 text-center">Checkout</button>
                     {{-- <a href="#" class="btn btn-success w-50 py-3">Pesan</a> --}}
                 </div>
             </div>
@@ -84,32 +92,32 @@
             let btnPlus = document.getElementById("btnPlus");
             let inputNumber = document.getElementById("formInput");
             let subtotal = document.getElementById("subtotal");
-        
+
             let qty = parseInt(inputNumber.value);
-            let price = {{ $product->price }};  // harga produk dari
-            
+            let price = {{ $product->price }}; // harga produk dari
+
             // menghitung harga total
             function updateSubtotal() {
                 let total = qty * price;
                 subtotal.innerHTML = "<b>Rp." + total.toLocaleString() + "</b>"; // Format angka
             }
-        
+
             // Plus
-            btnPlus.addEventListener("click", function(){
+            btnPlus.addEventListener("click", function() {
                 qty++;
                 inputNumber.value = qty;
                 updateSubtotal();
             });
-        
+
             // Minus
-            btnMinus.addEventListener("click", function(){
+            btnMinus.addEventListener("click", function() {
                 if (qty > 1) {
                     qty--;
                     inputNumber.value = qty;
                     updateSubtotal();
                 }
             });
-        
+
             updateSubtotal();
         </script>
     </x-slot>

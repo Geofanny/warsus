@@ -8,47 +8,53 @@ use App\Models\Order;
 use App\Models\cartDetail;
 use App\Models\orderDetail;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
+    
+    public function index()
+    {
 
-    // public function show($id, Request $request)
-    // {
-    //     $order = Order::with(['orderDetails.product'])->findOrFail($id);
+        $waitingPayments = Order::where('status', 'awaiting_payment')
+        ->with('orderDetails.product')
+        ->get()
+        ->groupBy(function ($order) {
+            return Carbon::parse($order->order_date)->toDateString(); // Hanya tanggal, tanpa waktu
+        });
 
-    //     // Konfigurasi Midtrans
-    //     Config::$serverKey = config('midtrans.server_key');
-    //     Config::$isProduction = config('midtrans.is_production');
-    //     Config::$isSanitized = config('midtrans.is_sanitized');
-    //     Config::$is3ds = config('midtrans.is_3ds');
+        $completedPayements = Order::where('status', 'completed')
+        ->with('orderDetails.product')
+        ->get()
+        ->groupBy('order_date');
 
-    //     // Ambil metode pembayaran dari URL (default: bank_transfer)
-    //     $paymentMethod = $request->query('payment_method', 'bank_transfer');
-        
-    //     // Tentukan metode pembayaran yang diperbolehkan
-    //     $paymentOptions = [
-    //         'bank_transfer' => ["bni_va", "bri_va", "permata_va","bca_va"],
-    //         'e_wallet' => ["gopay", "shopeepay", "ovo"]
-    //     ];
+        return view('info_order', [
+            'waitingPayments' => $waitingPayments,
+            'completedPayements' => $completedPayements
+        ]);
+    }
 
-    //     // Buat parameter untuk Midtrans
-    //     $params = [
-    //         'transaction_details' => [
-    //             'order_id' => $order->id_order . '-' . time(),
-    //             'gross_amount' => $order->total_payment,
-    //         ],
-    //         'customer_details' => [
-    //             'first_name' => "Jamal",
-    //             'email' => "jamal@gmail.com",
-    //         ],
-    //         'enabled_payments' => $paymentOptions[$paymentMethod] ?? $paymentOptions['bank_transfer']
-    //     ];
+    public function notYetPaid()
+    {
+        $waitingPayments = Order::where('status', 'awaiting_payment')
+        ->with('orderDetails.product')
+        ->get()
+        ->groupBy(function ($order) {
+            return Carbon::parse($order->order_date)->toDateString(); // Hanya tanggal, tanpa waktu
+        });
 
-    //     // Dapatkan Snap Token dari Midtrans
-    //     $snapToken = Snap::getSnapToken($params);
+        return view('notYetPaid',compact('waitingPayments'));
+    }
 
-    //     return view('order', compact('order', 'snapToken', 'paymentMethod'));
-    // }
+    public function completedPaid()
+    {
+        $completedPayements = Order::where('status', 'completed')
+        ->with('orderDetails.product')
+        ->get()
+        ->groupBy('order_date');
+
+        return view('completedPaid',compact('completedPayements'));
+    }
 
     public function show($id, Request $request)
     {
@@ -100,53 +106,5 @@ class OrderController extends Controller
 
         return view('order', compact('order', 'snapToken', 'paymentMethod'));
     }
-
-//     public function show($id, Request $request)
-// {
-//     $order = Order::with(['orderDetails.product'])->findOrFail($id);
-
-//     // Konfigurasi Midtrans
-//     Config::$serverKey = config('midtrans.server_key');
-//     Config::$isProduction = config('midtrans.is_production');
-//     Config::$isSanitized = config('midtrans.is_sanitized');
-//     Config::$is3ds = config('midtrans.is_3ds');
-
-//     // Ambil metode pembayaran dari URL (default: bank_transfer)
-//     $paymentMethod = $request->query('payment_method', 'bank_transfer');
-
-//     // Tentukan metode pembayaran yang diperbolehkan
-//     $paymentOptions = [
-//         'bank_transfer' => ["bni_va", "bri_va", "permata_va", "bca_va"],
-//         'e_wallet' => ["gopay", "shopeepay", "ovo"]
-//     ];
-
-//     // Buat parameter untuk Midtrans
-//     $params = [
-//         'transaction_details' => [
-//             'order_id' => $order->id_order . '-' . time(),
-//             'gross_amount' => $order->total_payment,
-//         ],
-//         'customer_details' => [
-//             'first_name' => "Jamal",
-//             'email' => "jamal@gmail.com",
-//         ],
-//         'enabled_payments' => $paymentOptions[$paymentMethod] ?? $paymentOptions['bank_transfer']
-//     ];
-
-//     // Dapatkan Snap Token dari Midtrans
-//     $snapToken = Snap::getSnapToken($params);
-
-//     // Cek apakah ini permintaan AJAX
-//     if ($request->ajax()) {
-//         return response()->json([
-//             'paymentOptions' => $paymentOptions[$paymentMethod],
-//             'snapToken' => $snapToken
-//         ]);
-//     }
-
-//     // Jika bukan AJAX, tampilkan halaman
-//     return view('order', compact('order', 'snapToken', 'paymentMethod'));
-// }
-
 
 }
